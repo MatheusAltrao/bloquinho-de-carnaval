@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CarnavalItemProps } from "@/types/carnaval.types";
+import Link from "next/link";
 
 interface CarnavalCardProps {
   carnaval: CarnavalItemProps;
@@ -39,9 +40,11 @@ export default function CarnavalCard({ carnaval }: CarnavalCardProps) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">
-          <Eye /> Ver Detalhes
-        </Button>
+        <Link className="w-full" href={`/carnaval/${carnaval.id}`}>
+          <Button className="w-full">
+            <Eye /> Ver Detalhes
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );

@@ -59,12 +59,6 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply scroll-smooth bg-background text-foreground antialiased;
-  }
+body {
+  @apply scroll-smooth bg-background text-foreground antialiased;
 }

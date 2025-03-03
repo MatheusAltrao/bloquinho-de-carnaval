@@ -1,14 +1,18 @@
+import ActivedFilters from "@/components/common/actived-filters";
 import CarnavalCard from "@/components/common/carnaval-card";
 import Filters from "@/components/common/filters";
+import PaginationComponent from "@/components/common/pagination";
+import { Button } from "@/components/ui/button";
 import { CarnavalFiltersProps, CarnavalProps } from "@/types/carnaval.types";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
-async function fetchCarnaval2025(filters: CarnavalFiltersProps = {}) {
+async function fetchCarnaval2025(filters: CarnavalFiltersProps = {}, page = 1) {
   const hasSearch = filters.search ? `search=${filters.search}` : "";
   const hasDate = filters.date ? `&date=${filters.date}` : "";
   const hasCity = filters.city ? `&city=${filters.city}` : "";
   const hasSort = filters.sort ? `&sort=${filters.sort}` : "";
 
-  const url = `${process.env.NEXT_PUBLIC_CODANTE_API_URL}/agenda?${hasSearch}${hasDate}${hasCity}${hasSort}`;
+  const url = `${process.env.NEXT_PUBLIC_CODANTE_API_URL}/agenda?page=${page}${hasSearch}${hasDate}${hasCity}${hasSort}`;
 
   try {
     const response = await fetch(url);
@@ -27,6 +31,7 @@ interface HomeProps {
     search?: string;
     city?: string;
     sort?: string;
+    page?: string;
   };
 }
 
@@ -37,21 +42,22 @@ export default async function Home({ searchParams }: HomeProps) {
     city: searchParams.city || "",
     sort: searchParams.sort || "",
   };
+  const page = Number(searchParams.page) || 1;
 
-  const carnaval: CarnavalProps = await fetchCarnaval2025(filters);
-
-  console.log(carnaval);
+  const carnaval: CarnavalProps = await fetchCarnaval2025(filters, page);
 
   return (
-    <div className="space-y-8">
-      <Filters />
-      <div className="w-full max-w-[1200px] p-4 mx-auto">
-        <div className="grid grid-cols-3 gap-4">
-          {carnaval.data.map((item) => (
-            <CarnavalCard key={item.id} carnaval={item} />
-          ))}
-        </div>
+    <div className="space-y-8 w-full max-w-[1200px] p-4 mx-auto pb-24">
+      <div className="space-y-4">
+        <Filters />
+        <ActivedFilters />
       </div>
+
+      <PaginationComponent
+        carnaval={carnaval}
+        filters={filters}
+        currentPage={page}
+      />
     </div>
   );
 }

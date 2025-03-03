@@ -20,9 +20,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState } from "react";
-import { ptBR } from "date-fns/locale";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { cities } from "@/helpers/cities.helpers";
 
 export default function Filters() {
   const router = useRouter();
@@ -30,59 +30,81 @@ export default function Filters() {
   const [search, setSearch] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [sort, setSort] = useState<string>("");
+  const searchParams = useSearchParams();
 
-  function handleAddFilterInParams() {
-    const params = new URLSearchParams();
+  useEffect(() => {
+    /*  const date = searchParams.get("date"); */
+    const search = searchParams.get("search");
+    const city = searchParams.get("city");
+    const sort = searchParams.get("sort");
 
-    if (date) {
-      params.append("date", format(date, "yyyy-MM-dd"));
-    }
+    /*  if (date) {
+      setDate(new Date(format(date, "yyyy-MM-dd")));
+    } */
 
     if (search) {
-      params.append("search", search);
+      setSearch(search);
     }
 
     if (city) {
-      params.append("city", city);
+      setCity(city);
     }
 
     if (sort) {
-      params.append("sort", sort);
+      setSort(sort);
     }
+  }, []);
 
-    //router.push(`/?date=${date}&search=${search}&city=${city}&sort=${sort}`);
-    router.push(`/?search=${search}`);
+  function handleAddFilterInParams() {
+    const filters = {
+      date: date || "",
+      search: search || "",
+      city: city || "",
+      sort: sort || "",
+    };
+
+    const hasSearch = filters.search ? `search=${filters.search}` : "";
+    const hasDate = filters.date
+      ? `&date=${format(new Date(filters.date), "yyyy-MM-dd")}`
+      : "";
+    const hasCity = filters.city ? `&city=${filters.city}` : "";
+    const hasSort = filters.sort ? `&sort=${filters.sort}` : "";
+
+    router.push(`/?${hasSearch}${hasDate}${hasCity}${hasSort}`);
   }
 
   return (
-    <header>
-      <div className="w-full max-w-[1200px] mx-auto p-4 flex items-center gap-2">
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Pesquisar por bloquinho"
-        />
-
-        <Select>
-          <SelectTrigger className="w-full max-w-[180px]">
-            <SelectValue placeholder="Cidades" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="sao-paulo">São Paulo</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select>
-          <SelectTrigger className="w-full max-w-[180px]">
-            <SelectValue placeholder="Ordenar" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="sao-paulo">Recenter Primeiro</SelectItem>
-            <SelectItem value="sao-paulo">Antigas Primeiro</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Popover>
+    <header className="  flex items-center gap-2">
+      <Input
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Pesquisar por bloquinho"
+      />
+      {/* cidades */}
+      <Select value={city} onValueChange={(value) => setCity(value)}>
+        <SelectTrigger className="w-full max-w-[180px]">
+          <SelectValue placeholder="Cidades" />
+        </SelectTrigger>
+        <SelectContent>
+          {cities.map((city) => (
+            <SelectItem key={city} value={city}>
+              {city}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {/* ordenar */}
+      <Select value={sort} onValueChange={(value) => setSort(value)}>
+        <SelectTrigger className="w-full max-w-[180px]">
+          <SelectValue placeholder="Ordenar" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="desc">Recenter Primeiro</SelectItem>
+          <SelectItem value="asc">Antigas Primeiro</SelectItem>
+        </SelectContent>
+      </Select>
+      {/* calendario */}
+      {/*   <Popover>
           <PopoverTrigger asChild>
             <Button
               variant={"outline"}
@@ -108,12 +130,11 @@ export default function Filters() {
               initialFocus
             />
           </PopoverContent>
-        </Popover>
+        </Popover> */}
 
-        <Button onClick={handleAddFilterInParams}>
-          <Search size={20} /> Buscar
-        </Button>
-      </div>
+      <Button onClick={handleAddFilterInParams}>
+        <Search size={20} /> Buscar
+      </Button>
     </header>
   );
 }

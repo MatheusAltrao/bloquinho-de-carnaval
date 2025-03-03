@@ -1,4 +1,5 @@
 import CarnavalCard from "@/components/common/carnaval-card";
+import Filters from "@/components/common/filters";
 import { CarnavalProps } from "@/types/carnaval.types";
 
 async function fetchCarnaval2025() {
@@ -20,7 +21,8 @@ export default async function Home() {
 
   console.log(carnaval);
   return (
-    <div>
+    <div className="space-y-8">
+      <Filters />
       <div className="w-full max-w-[1200px] p-4 mx-auto">
         <div className="grid grid-cols-3 gap-4">
           {carnaval.data.map((item) => (

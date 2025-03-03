@@ -60,5 +60,5 @@
 }
 
 body {
-  @apply scroll-smooth bg-background text-foreground antialiased;
+  @apply scroll-smooth bg-background text-foreground antialiased border-border;
 }

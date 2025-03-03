@@ -22,19 +22,47 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 import { ptBR } from "date-fns/locale";
+import { useRouter } from "next/navigation";
 
 export default function Filters() {
+  const router = useRouter();
   const [date, setDate] = useState<Date>();
+  const [search, setSearch] = useState<string>("");
+  const [city, setCity] = useState<string>("");
+  const [sort, setSort] = useState<string>("");
+
+  function handleAddFilterInParams() {
+    const params = new URLSearchParams();
+
+    if (date) {
+      params.append("date", format(date, "yyyy-MM-dd"));
+    }
+
+    if (search) {
+      params.append("search", search);
+    }
+
+    if (city) {
+      params.append("city", city);
+    }
+
+    if (sort) {
+      params.append("sort", sort);
+    }
+
+    //router.push(`/?date=${date}&search=${search}&city=${city}&sort=${sort}`);
+    router.push(`/?search=${search}`);
+  }
+
   return (
     <header>
       <div className="w-full max-w-[1200px] mx-auto p-4 flex items-center gap-2">
-        <div className="flex items-center gap-2 w-full">
-          <Input placeholder="Pesquisar por bloquinho" />
-          <Button>
-            <Search size={20} /> Buscar
-          </Button>
-        </div>
-        <Separator orientation="vertical" />
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Pesquisar por bloquinho"
+        />
+
         <Select>
           <SelectTrigger className="w-full max-w-[180px]">
             <SelectValue placeholder="Cidades" />
@@ -81,6 +109,10 @@ export default function Filters() {
             />
           </PopoverContent>
         </Popover>
+
+        <Button onClick={handleAddFilterInParams}>
+          <Search size={20} /> Buscar
+        </Button>
       </div>
     </header>
   );

@@ -20,3 +20,10 @@ export interface CarnavalProps {
     next: string | null;
   };
 }
+
+export interface CarnavalFiltersProps {
+  date?: string;
+  search?: string;
+  city?: string;
+  sort?: string;
+}

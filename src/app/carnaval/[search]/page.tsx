@@ -1,4 +1,10 @@
-import { Calendar, MapPin, Ticket, ExternalLink } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Ticket,
+  ExternalLink,
+  ArrowLeft,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,42 +18,47 @@ import { Badge } from "@/components/ui/badge";
 import { CarnavalItemProps } from "@/types/carnaval.types";
 import Link from "next/link";
 
-const eventoExemplo: CarnavalItemProps = {
-  id: 1,
-  title: "Bloco do Samba",
-  description:
-    "Venha curtir o melhor do samba com o Bloco do Samba, uma experiência única com os melhores sambistas da cidade. Traga sua família e amigos para celebrar o carnaval com muita alegria e diversão!",
-  date_time: "2025-02-15T14:00:00",
-  address: "Avenida Principal",
-  complete_address: "Avenida Principal, 123",
-  city: "Rio de Janeiro",
-  neighborhood: "Copacabana",
-  price: "Gratuito",
-  event_url: "https://exemplo.com/bloco-do-samba",
-};
-
 interface CarnavalPageProps {
   params: {
-    id: string;
+    search: string;
   };
 }
 
-export default function CarnavalPage({ params }: CarnavalPageProps) {
+const fetchCarnavalCard = async (search: string) => {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_CODANTE_API_URL}/agenda?search=${search}`;
+    const response = await fetch(url);
+    const carnaval = await response.json();
+    const data = carnaval.data[0];
+    return data;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+export default async function CarnavalPage({ params }: CarnavalPageProps) {
+  const carnavalByTitle: CarnavalItemProps = await fetchCarnavalCard(
+    params.search
+  );
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6 space-x-2">
-          <Button variant="outline" size="sm" className="mb-4" asChild>
-            <Link href="/">
-              <span>← Voltar para todos os eventos</span>
-            </Link>
-          </Button>
+          <Link href="/">
+            <Button variant="outline" size="sm" className="mb-4">
+              <ArrowLeft size={16} /> Voltar para todos os eventos
+            </Button>
+          </Link>
 
-          <Badge className="mb-2">{eventoExemplo.city}</Badge>
+          <Badge className="mb-2">{carnavalByTitle.city}</Badge>
           <h1 className="text-3xl font-bold tracking-tight md:text-4xl mb-2">
-            {eventoExemplo.title}
+            {carnavalByTitle.title}
           </h1>
-          <p className="text-muted-foreground">{eventoExemplo.neighborhood}</p>
+          <p className="text-muted-foreground">
+            {carnavalByTitle.neighborhood}
+          </p>
         </div>
 
         <Card className="mb-8">
@@ -57,7 +68,7 @@ export default function CarnavalPage({ params }: CarnavalPageProps) {
           <CardContent className="space-y-6">
             <div className="space-y-1">
               <h3 className="font-medium">Descrição</h3>
-              <p>{eventoExemplo.description}</p>
+              <p>{carnavalByTitle.description}</p>
             </div>
 
             <Separator />
@@ -68,7 +79,7 @@ export default function CarnavalPage({ params }: CarnavalPageProps) {
                 <div>
                   <h3 className="font-medium">Data e Hora</h3>
                   <p>
-                    {new Date(eventoExemplo.date_time).toLocaleDateString(
+                    {new Date(carnavalByTitle.date_time).toLocaleDateString(
                       "pt-BR",
                       {
                         day: "numeric",
@@ -78,7 +89,7 @@ export default function CarnavalPage({ params }: CarnavalPageProps) {
                     )}
                   </p>
                   <p>
-                    {new Date(eventoExemplo.date_time).toLocaleTimeString(
+                    {new Date(carnavalByTitle.date_time).toLocaleTimeString(
                       "pt-BR",
                       {
                         hour: "2-digit",
@@ -93,7 +104,7 @@ export default function CarnavalPage({ params }: CarnavalPageProps) {
                 <Ticket className="h-5 w-5 text-primary mt-0.5" />
                 <div>
                   <h3 className="font-medium">Preço</h3>
-                  <p>{eventoExemplo.price}</p>
+                  <p>{carnavalByTitle.price}</p>
                 </div>
               </div>
             </div>
@@ -105,9 +116,9 @@ export default function CarnavalPage({ params }: CarnavalPageProps) {
               <div className="flex items-start gap-2">
                 <MapPin className="h-5 w-5 text-primary mt-0.5" />
                 <div>
-                  <p>{eventoExemplo.complete_address}</p>
+                  <p>{carnavalByTitle.complete_address}</p>
                   <p>
-                    {eventoExemplo.neighborhood}, {eventoExemplo.city}
+                    {carnavalByTitle.neighborhood}, {carnavalByTitle.city}
                   </p>
                 </div>
               </div>
@@ -115,7 +126,9 @@ export default function CarnavalPage({ params }: CarnavalPageProps) {
               <div className="mt-4 aspect-video w-full rounded-lg overflow-hidden bg-muted">
                 <iframe
                   src={`https://maps.google.com/maps?q=${encodeURIComponent(
-                    eventoExemplo.complete_address + ", " + eventoExemplo.city
+                    carnavalByTitle.complete_address +
+                      ", " +
+                      carnavalByTitle.city
                   )}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                   className="w-full h-full border-0"
                   allowFullScreen
@@ -128,7 +141,7 @@ export default function CarnavalPage({ params }: CarnavalPageProps) {
           <CardFooter>
             <Button className="w-full" asChild>
               <a
-                href={eventoExemplo.event_url}
+                href={carnavalByTitle.event_url}
                 target="_blank"
                 rel="noopener noreferrer"
               >

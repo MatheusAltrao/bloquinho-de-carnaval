@@ -1,10 +1,6 @@
-import ActivedFilters from "@/components/common/actived-filters";
-import CarnavalCard from "@/components/common/carnaval-card";
 import Filters from "@/components/common/filters";
 import PaginationComponent from "@/components/common/pagination";
-import { Button } from "@/components/ui/button";
 import { CarnavalFiltersProps, CarnavalProps } from "@/types/carnaval.types";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 
 async function fetchCarnaval2025(filters: CarnavalFiltersProps = {}, page = 1) {
   const queryParams = new URLSearchParams();

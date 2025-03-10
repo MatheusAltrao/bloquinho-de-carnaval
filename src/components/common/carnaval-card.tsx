@@ -40,7 +40,7 @@ export default function CarnavalCard({ carnaval }: CarnavalCardProps) {
         </div>
       </CardContent>
       <CardFooter>
-        <Link className="w-full" href={`/carnaval/${carnaval.id}`}>
+        <Link className="w-full" href={`/carnaval/${carnaval.title}`}>
           <Button className="w-full">
             <Eye /> Ver Detalhes
           </Button>

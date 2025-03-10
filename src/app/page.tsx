@@ -7,12 +7,18 @@ import { CarnavalFiltersProps, CarnavalProps } from "@/types/carnaval.types";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 async function fetchCarnaval2025(filters: CarnavalFiltersProps = {}, page = 1) {
-  const hasSearch = filters.search ? `search=${filters.search}` : "";
-  const hasDate = filters.date ? `&date=${filters.date}` : "";
-  const hasCity = filters.city ? `&city=${filters.city}` : "";
-  const hasSort = filters.sort ? `&sort=${filters.sort}` : "";
+  const queryParams = new URLSearchParams();
 
-  const url = `${process.env.NEXT_PUBLIC_CODANTE_API_URL}/agenda?page=${page}${hasSearch}${hasDate}${hasCity}${hasSort}`;
+  if (filters.search) queryParams.append("search", filters.search);
+  if (filters.date) queryParams.append("date", filters.date);
+  if (filters.city) queryParams.append("city", filters.city);
+  if (filters.sort) queryParams.append("sort", filters.sort);
+
+  queryParams.append("page", String(page));
+
+  const url = `${
+    process.env.NEXT_PUBLIC_CODANTE_API_URL
+  }/agenda?${queryParams.toString()}`;
 
   try {
     const response = await fetch(url);
@@ -48,10 +54,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   return (
     <div className="space-y-8 w-full max-w-[1200px] p-4 mx-auto pb-24">
-      <div className="space-y-4">
-        <Filters />
-        <ActivedFilters />
-      </div>
+      <Filters />
 
       <PaginationComponent
         carnaval={carnaval}

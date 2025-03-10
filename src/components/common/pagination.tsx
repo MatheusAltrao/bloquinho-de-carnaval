@@ -70,7 +70,14 @@ export default function PaginationComponent({
             <ArrowLeft size={16} /> Anterior
           </Button>
 
-          <div className="flex items-center gap-1">
+          <div className="lg:hidden">
+            <span className="text-sm">
+              <span className="font-bold ">{currentPage}</span> de{" "}
+              <span className="font-bold ">{lastPage}</span>
+            </span>
+          </div>
+
+          <div className="lg:flex hidden items-center gap-1">
             {pages.map((page, index) =>
               typeof page === "number" ? (
                 <Button
@@ -80,7 +87,6 @@ export default function PaginationComponent({
                   onClick={() => handlePageChange(page)}
                 >
                   {page.toString().padStart(2, "0")}{" "}
-                  {/* Formata como 01, 02, 03 */}
                 </Button>
               ) : (
                 <span key={index} className="px-2 text-gray-500">

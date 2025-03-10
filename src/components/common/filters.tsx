@@ -1,5 +1,5 @@
 "use client";
-import { Search } from "lucide-react";
+import { Filter, Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import {
@@ -25,14 +25,24 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { cities } from "@/helpers/cities.helpers";
 import { ptBR } from "date-fns/locale";
 import ActivedFilters from "./actived-filters";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function Filters() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [date, setDate] = useState<Date>();
   const [search, setSearch] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [sort, setSort] = useState<string>("");
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     /*  const date = searchParams.get("date"); */
@@ -101,68 +111,162 @@ export default function Filters() {
 
   return (
     <div className="space-y-4">
-      <header className="  flex items-center gap-2">
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Pesquisar por bloquinho"
-        />
-        {/* cidades */}
-        <Select value={city} onValueChange={(value) => setCity(value)}>
-          <SelectTrigger className="w-full max-w-[180px]">
-            <SelectValue placeholder="Cidades" />
-          </SelectTrigger>
-          <SelectContent>
-            {cities.map((city) => (
-              <SelectItem key={city} value={city}>
-                {city}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {/* ordenar */}
-        <Select value={sort} onValueChange={(value) => setSort(value)}>
-          <SelectTrigger className="w-full max-w-[180px]">
-            <SelectValue placeholder="Ordenar" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="desc">Recentes Primeiro</SelectItem>
-            <SelectItem value="asc">Antigas Primeiro</SelectItem>
-          </SelectContent>
-        </Select>
-        {/* calendario */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-full max-w-[180px] justify-start text-left  font-normal",
-                !date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon />
-              {date ? (
-                format(date, "dd 'de' MMMM", { locale: ptBR })
-              ) : (
-                <span>Escolher data</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 border-border">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              locale={ptBR}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+      <header>
+        <div className=" hidden lg:flex items-center gap-2">
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Pesquisar por bloquinho"
+          />
+          {/* cidades */}
+          <Select value={city} onValueChange={(value) => setCity(value)}>
+            <SelectTrigger className="w-full max-w-[180px]">
+              <SelectValue placeholder="Cidades" />
+            </SelectTrigger>
+            <SelectContent>
+              {cities.map((city) => (
+                <SelectItem key={city} value={city}>
+                  {city}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {/* ordenar */}
+          <Select value={sort} onValueChange={(value) => setSort(value)}>
+            <SelectTrigger className="w-full max-w-[180px]">
+              <SelectValue placeholder="Ordenar" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="desc">Recentes Primeiro</SelectItem>
+              <SelectItem value="asc">Antigas Primeiro</SelectItem>
+            </SelectContent>
+          </Select>
+          {/* calendario */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full max-w-[180px] justify-start text-left  font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon />
+                {date ? (
+                  format(date, "dd 'de' MMMM", { locale: ptBR })
+                ) : (
+                  <span>Escolher data</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 border-border">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                locale={ptBR}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
 
-        <Button onClick={handleAddFilterInParams}>
-          <Search size={20} /> Buscar
-        </Button>
+          <Button onClick={handleAddFilterInParams}>
+            <Search size={20} /> Buscar
+          </Button>
+        </div>
+
+        <div className="flex lg:hidden items-center justify-between">
+          <h1 className="font-bold text-xl">Bloquinhos </h1>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button>
+                <Filter /> Filtros
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader className="text-left">
+                <SheetTitle>Filtros</SheetTitle>
+                <SheetDescription>
+                  Filtre os bloquinhos por data, cidade e ordem.
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="space-y-8">
+                <div className="  flex flex-col gap-2 mt-4">
+                  <Input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Pesquisar por bloquinho"
+                  />
+                  {/* cidades */}
+                  <Select
+                    value={city}
+                    onValueChange={(value) => setCity(value)}
+                  >
+                    <SelectTrigger className="w-full ">
+                      <SelectValue placeholder="Cidades" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city} value={city}>
+                          {city}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {/* ordenar */}
+                  <Select
+                    value={sort}
+                    onValueChange={(value) => setSort(value)}
+                  >
+                    <SelectTrigger className="w-full ">
+                      <SelectValue placeholder="Ordenar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="desc">Recentes Primeiro</SelectItem>
+                      <SelectItem value="asc">Antigas Primeiro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {/* calendario */}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full  justify-start text-left  font-normal",
+                          !date && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon />
+                        {date ? (
+                          format(date, "dd 'de' MMMM", { locale: ptBR })
+                        ) : (
+                          <span>Escolher data</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 border-border">
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        locale={ptBR}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <SheetClose asChild>
+                  <Button className="w-full" onClick={handleAddFilterInParams}>
+                    <Search size={20} /> Buscar
+                  </Button>
+                </SheetClose>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </header>
+
       <ActivedFilters handleRemoveFilter={handleRemoveFilter} />
     </div>
   );

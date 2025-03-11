@@ -17,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { CarnavalItemProps } from "@/types/carnaval.types";
 import Link from "next/link";
+import Back from "@/components/common/back";
 
 interface CarnavalPageProps {
   params: {
@@ -46,11 +47,7 @@ export default async function CarnavalPage({ params }: CarnavalPageProps) {
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6 space-x-2">
-          <Link href="/">
-            <Button variant="outline" size="sm" className="mb-4">
-              <ArrowLeft size={16} /> Voltar para todos os eventos
-            </Button>
-          </Link>
+          <Back />
 
           <Badge className="mb-2">{carnavalByTitle.city}</Badge>
           <h1 className="text-3xl font-bold tracking-tight md:text-4xl mb-2">
@@ -138,18 +135,20 @@ export default async function CarnavalPage({ params }: CarnavalPageProps) {
               </div>
             </div>
           </CardContent>
-          <CardFooter>
-            <Button className="w-full" asChild>
-              <a
-                href={carnavalByTitle.event_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Visitar Site do Evento
-              </a>
-            </Button>
-          </CardFooter>
+          {carnavalByTitle.event_url && (
+            <CardFooter>
+              <Button className="w-full" asChild>
+                <Link
+                  href={carnavalByTitle.event_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Visitar Site do Evento
+                </Link>
+              </Button>
+            </CardFooter>
+          )}
         </Card>
       </div>
     </div>

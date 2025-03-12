@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Boquinhos de carnaval 2025",
-  description: "Boquinhos de carnaval 2025",
+  title: "Bloquinhos de carnaval 2025",
+  description: "Bloquinhos de carnaval 2025",
 };
 
 export default function RootLayout({
